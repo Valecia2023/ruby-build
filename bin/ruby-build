@@ -14,7 +14,7 @@
 #   --version        Show version of ruby-build
 #
 
-RUBY_BUILD_VERSION="20230710"
+RUBY_BUILD_VERSION="20230717"
 
 OLDIFS="$IFS"
 
@@ -1153,7 +1153,7 @@ needs_openssl_102_300() {
 use_homebrew_openssl() {
   local ssldir="$(brew --prefix openssl@1.1 2>/dev/null || true)"
   if [ -d "$ssldir" ]; then
-    echo "ruby-build: using openssl from homebrew"
+    echo "ruby-build: using openssl@1.1 from homebrew"
     package_option ruby configure --with-openssl-dir="$ssldir"
   else
     colorize 1 "ERROR openssl@1.1 from Homebrew is required, run 'brew install openssl@1.1'"
@@ -1242,8 +1242,8 @@ build_package_verify_openssl() {
     failed = %w[openssl readline zlib yaml].reject do |lib|
       begin
         require lib
-      rescue LoadError
-        $stderr.puts "The Ruby #{lib} extension was not compiled."
+      rescue LoadError => e
+        $stderr.puts "Loading the Ruby #{lib} extension failed (#{e})"
       end
     end
 
